@@ -81,6 +81,25 @@ impl RawEvent {
                     None
                 }
             },
+            "EVENT_VEH_SIZE" => {
+                if let Some(data) = self.data {
+                    if let Ok(decoded) = serde_json::from_value(data) {
+                        if let Some(pid) = self.player_id {
+                            if let Some(vid) = self.vehicle_id {
+                                Some(Event::VehicleSize((pid as usize, vid as usize, decoded)))
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            },
             _ => None
         }
     }
@@ -96,6 +115,7 @@ pub enum Event {
     VehicleDelete((usize, usize)),
 
     VehiclePosition((usize, usize, EventVehiclePosition)),
+    VehicleSize((usize, usize, EventVehicleSize)),
 }
 
 #[derive(Deserialize)]
@@ -113,4 +133,9 @@ pub struct EventVehiclePosition {
     pub rot: [f32; 4],
     pub vel: [f32; 3],
     pub rvel: [f32; 3],
+}
+
+#[derive(Deserialize)]
+pub struct EventVehicleSize {
+    pub size: [f32; 2],
 }

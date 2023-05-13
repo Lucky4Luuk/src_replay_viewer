@@ -87,7 +87,7 @@ pub struct Car {
     pub vel: (f32, f32, f32),
     pub rvel: (f32, f32, f32),
 
-    pub size: (u32, u32),
+    pub size: (f32, f32),
 }
 
 #[derive(Clone, Debug)]
@@ -141,6 +141,14 @@ impl ReplayState {
                         car.rot = (data.rot[0], data.rot[1], data.rot[2], data.rot[3]);
                         car.vel = (data.vel[0], data.vel[1], data.vel[2]);
                         car.rvel = (data.rvel[0], data.rvel[1], data.rvel[2]);
+                    }
+                },
+                Event::VehicleSize((pid, vid, data)) => {
+                    // We don't have to store the event for later, it should be impossible to receive this event
+                    // before the spawn event. The vehicle spawn handler first saves its own event before
+                    // requesting vehicle size and waiting for a response.
+                    if let Some(car) = self.cars.get_mut(&(pid, vid)) {
+                        car.size = (data.size[0], data.size[1]);
                     }
                 },
 
