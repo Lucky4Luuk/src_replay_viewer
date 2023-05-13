@@ -108,6 +108,14 @@ impl ReplayState {
                 },
                 Event::PlayerLeave(pid) => {
                     self.players.remove(&pid);
+                    // When a player leaves, remove all his existing cars, just to make sure
+                    let mut vids = Vec::new();
+                    for ((search_pid, vid), _car) in &self.cars {
+                        if pid == *search_pid { vids.push(*vid); }
+                    }
+                    for vid in vids {
+                        self.cars.remove(&(pid, vid));
+                    }
                 },
 
                 Event::VehicleSpawn((pid, vid, _data)) => {
@@ -124,7 +132,9 @@ impl ReplayState {
                     };
                     self.cars.insert((pid, vid), car);
                 },
-
+                Event::VehicleDelete((pid, vid)) => {
+                    self.cars.remove(&(pid, vid));
+                },
                 Event::VehiclePosition((pid, vid, data)) => {
                     if let Some(car) = self.cars.get_mut(&(pid, vid)) {
                         car.pos = (data.pos[0], data.pos[1], data.pos[2]);

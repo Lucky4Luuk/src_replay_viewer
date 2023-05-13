@@ -51,6 +51,17 @@ impl RawEvent {
                     None
                 }
             },
+            "EVENT_VEH_DELETE" => {
+                if let Some(pid) = self.player_id {
+                    if let Some(vid) = self.vehicle_id {
+                        Some(Event::VehicleDelete((pid as usize, vid as usize)))
+                    } else {
+                        None
+                    }
+                } else {
+                    None
+                }
+            },
             "EVENT_VEH_POS" => {
                 if let Some(data) = self.data {
                     if let Ok(decoded) = serde_json::from_value(data) {
@@ -82,6 +93,7 @@ pub enum Event {
     PlayerLeave(usize),
 
     VehicleSpawn((usize, usize, EventVehicleSpawn)),
+    VehicleDelete((usize, usize)),
 
     VehiclePosition((usize, usize, EventVehiclePosition)),
 }
