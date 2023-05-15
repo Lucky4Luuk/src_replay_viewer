@@ -24,14 +24,30 @@ pub fn replay_ui(replay: &mut Replay, ctx: &egui::Context, ui: &mut egui::Ui) {
             });
             ui.vertical_centered(|ui| {
                 ui.columns(7, |columns| {
-                    columns[1].button("|<");
-                    columns[2].button("<<");
-                    columns[3].button("=>");
-                    columns[4].button(">>");
-                    columns[5].button(">|");
+                    columns[1].horizontal(|ui| {
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
+                            ui.button("|<");
+                            ui.label("");
+                        });
+                    });
+                    if columns[2].button("<<").clicked() {
+                        replay.playback_speed = if replay.playback_speed > 0.0 { -0.25 } else { replay.playback_speed - 0.25 };
+                    }
+                    if columns[3].button("=>").clicked() {
+                        replay.playback_speed = if replay.playback_speed == 0.0 { 1.0 } else { 0.0 };
+                    }
+                    if columns[4].button(">>").clicked() {
+                        replay.playback_speed = replay.playback_speed + 0.25;
+                    }
+                    columns[5].horizontal(|ui| {
+                        ui.button(">|");
+                        ui.label(format!("{}x", replay.playback_speed));
+                    });
                 });
             });
         });
+
+    replay.update();
 }
 
 // TODO: Zoom in/out

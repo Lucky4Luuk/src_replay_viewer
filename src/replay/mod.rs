@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::time::Instant;
 
 mod event;
 pub(super) use event::*;
@@ -8,6 +9,8 @@ pub use ui::*;
 
 pub struct Replay {
     ticks: Vec<ReplayState>,
+
+    instant_since_last_update: Instant,
 
     pub time: f32,
     pub end: f32,
@@ -26,17 +29,11 @@ impl Replay {
 
         // Split events per "tick"
         let mut events_per_tick: Vec<Vec<RawEvent>> = Vec::new();
-        let mut tick_events: Vec<RawEvent> = Vec::new();
-        let mut cur_tick = 0;
+        let max_ticks = (end * 25.0) as usize + 1;
+        for _ in 0..max_ticks { events_per_tick.push(Vec::new()); }
         for event in &events {
             let tick = (event.time * 25.0) as usize;
-            if tick > cur_tick {
-                events_per_tick.push(tick_events);
-                tick_events = Vec::new();
-                cur_tick += 1;
-            }
-
-            tick_events.push(event.clone());
+            events_per_tick[tick].push(event.clone());
         }
 
         let mut ticks: Vec<ReplayState> = Vec::new();
@@ -55,12 +52,22 @@ impl Replay {
         Ok(Self {
             ticks,
 
+            instant_since_last_update: Instant::now(),
+
             time: 0f32,
             end,
 
             cam_pos: egui::Vec2::splat(0f32),
             playback_speed: 0f32,
         })
+    }
+
+    pub fn update(&mut self) {
+        let now = Instant::now();
+        let delta_s = (now - self.instant_since_last_update).as_secs_f32();
+        self.instant_since_last_update = now;
+
+        self.time += delta_s * self.playback_speed;
     }
 
     pub fn get_state(&self) -> ReplayState {
