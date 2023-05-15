@@ -11,6 +11,8 @@ pub struct Replay {
 
     pub time: f32,
     pub end: f32,
+
+    pub cam_pos: egui::Vec2,
 }
 
 impl Replay {
@@ -54,6 +56,8 @@ impl Replay {
 
             time: 0f32,
             end,
+
+            cam_pos: egui::Vec2::splat(0f32),
         })
     }
 
