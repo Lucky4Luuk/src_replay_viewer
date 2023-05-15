@@ -13,6 +13,7 @@ pub struct Replay {
     pub end: f32,
 
     pub cam_pos: egui::Vec2,
+    pub playback_speed: f32, // 0 = paused
 }
 
 impl Replay {
@@ -58,6 +59,7 @@ impl Replay {
             end,
 
             cam_pos: egui::Vec2::splat(0f32),
+            playback_speed: 0f32,
         })
     }
 

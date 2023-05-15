@@ -22,6 +22,15 @@ pub fn replay_ui(replay: &mut Replay, ctx: &egui::Context, ui: &mut egui::Ui) {
                 let second = (replay.time % 60.0) as usize;
                 ui.label(format!("{}:{:0>2}", minute, second));
             });
+            ui.vertical_centered(|ui| {
+                ui.columns(7, |columns| {
+                    columns[1].button("|<");
+                    columns[2].button("<<");
+                    columns[3].button("=>");
+                    columns[4].button(">>");
+                    columns[5].button(">|");
+                });
+            });
         });
 }
 
@@ -29,6 +38,8 @@ pub fn replay_ui(replay: &mut Replay, ctx: &egui::Context, ui: &mut egui::Ui) {
 // TODO: Draw car bbox based on size (no data yet)
 // TODO: Tween zoom and drag
 // TODO: Interpolation based on velocity and rotational velocity
+// TODO: Event list? Show important events like car edits, players joining/leaving, etc
+// TODO: Draw track (probably just an overhead image?)
 fn replay_ui_main(replay: &mut Replay, ctx: &egui::Context, ui: &mut egui::Ui) {
     let cur_state = replay.get_state();
     // ui.label(format!("{:#?}", cur_state));

@@ -34,6 +34,8 @@ impl eframe::App for App {
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(replay) = &mut self.replay {
                 replay_ui(replay, ctx, ui);
+                // TODO: Only force refreshing every frame if a replay is being played back?
+                ctx.request_repaint(); // Constantly trigger a repaint to force an update every frame
             } else {
                 if let Some(path) = show_file_pick_ui(ctx, ui) {
                     self.open_replay(path).unwrap();
