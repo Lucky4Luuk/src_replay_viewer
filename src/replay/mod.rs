@@ -128,7 +128,7 @@ impl ReplayState {
                         vel: (0f32, 0f32, 0f32),
                         rvel: (0f32, 0f32, 0f32),
 
-                        size: (0, 0),
+                        size: (0f32, 0f32),
                     };
                     self.cars.insert((pid, vid), car);
                 },
